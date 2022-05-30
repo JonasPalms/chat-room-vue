@@ -9,8 +9,8 @@ const getCollection = (collection) => {
     let collectionRef = projectFirestore.collection(collection)
         .orderBy('createdAt')
 
-    collectionRef.onSnapshot((snapshot) => {
-
+    const unsub = collectionRef.onSnapshot((snapshot) => {
+        console.log('snapshot')
         let results = []
 
         snapshot.docs.forEach(doc => {
@@ -18,9 +18,14 @@ const getCollection = (collection) => {
         })
 
         documents.value = results
+        error.value = null;
+    }, (err) => {
+        console.log(err.message)
+        documents.value = null;
+        error.value = 'could not fetch data'
+    })
 
-    }).
-
+    return { documents, error, unsub }
 }
 
 export default getCollection; 
